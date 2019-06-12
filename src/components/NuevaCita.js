@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import uuid from 'uuid'
 
 class NuevaCita extends Component {
     state = { 
@@ -8,7 +9,8 @@ class NuevaCita extends Component {
             fecha : "",
             hora : "",
             sintomas : ""
-        }
+        },
+        error : false
     }
     
     handleChange = (e) => {
@@ -20,6 +22,22 @@ class NuevaCita extends Component {
         })
     }
 
+    handleSubmit = e => {
+        e.preventDefault();
+        
+        const { mascota, propietario, fecha, hora, sintomas } = this.state.cita;
+        if(mascota === '' || propietario === '' || fecha === '' || hora === '' || sintomas === '') {
+            this.setState({
+                error : true
+            })
+            return;
+        }
+
+        const nuevaCita = {...this.state.cita};
+        nuevaCita.id = uuid();
+        this.props.crearNuevaCita(this.state.cita)
+    }
+
     render() { 
         return ( 
             <div className="card mt-5 py-5">
@@ -27,7 +45,9 @@ class NuevaCita extends Component {
                     <h2 className="card-title text-center mb-5">
                         Llena el formulario para crear una nueva cita
                     </h2>
-                    <form>
+                    <form
+                        onSubmit={this.handleSubmit}
+                    >
 
                         <div className="form-group row">
                             <label className="col-sm-4 col-lg-2 col-form-label">
@@ -108,7 +128,8 @@ class NuevaCita extends Component {
                         <input 
                             type="submit" 
                             className="py-3 mt-2 btn btn-success btn-block"
-                            value="Agregar nueva cita"/>
+                            value="Agregar nueva cita"
+                            />
                     </form>
                 </div>
             </div>
